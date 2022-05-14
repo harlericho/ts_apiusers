@@ -14,6 +14,11 @@ export const getUserById = async (req: Request, res: Response) => {
   const conn = await connect();
   const { id } = req.params;
   const user = await conn.query("SELECT * FROM users WHERE id = ?", [id]);
+  if (Object.keys(user[0]).length === 0) {
+    return res.json({
+      message: "User not found",
+    });
+  }
   return res.json({
     message: "User found",
     data: user[0],
@@ -41,6 +46,12 @@ export const updateUser = async (req: Request, res: Response) => {
 export const deleteUser = async (req: Request, res: Response) => {
   const conn = await connect();
   const { id } = req.params;
+  const user = await conn.query("SELECT * FROM users WHERE id = ?", [id]);
+  if (Object.keys(user[0]).length === 0) {
+    return res.json({
+      message: "User not found",
+    });
+  }
   await conn.query("DELETE FROM users WHERE id = ?", [id]);
   return res.json({
     message: "true",
